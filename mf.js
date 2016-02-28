@@ -258,8 +258,7 @@
   addNode('Forest', 128, -128);
   addNode('Steppe', 0, -128);
   addNode('Cavern', -128, -128);
-  addNode('Stream', -256, -128);
-  addNode('Town Hall', -256, -256);
+  addNode('Town Hall', 0, -256);
  }
  function loadFromNetwork(saveID) {
   var r = new XMLHttpRequest();

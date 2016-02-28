@@ -1,4 +1,8 @@
 var resources = {
+
+
+ //Worker units:
+ 
  'Worker':[192,192,192],
  'Farmer':[192,192,192],
  'Lumberjack':[192,192,192],
@@ -6,7 +10,30 @@ var resources = {
  'Carpenter':[192,192,192],
  'Mason':[192,192,192],
  'child':[192,192,192],
- 'Town Hall':[192,192,192],
+ 'Monk':[50,60,90],
+ 
+ 
+ //Resources:
+
+ 'stone':[128,128,128],
+ 'log':[136,91,51],
+ 'grain':[248,239,187],
+ 'water':[46,115,174],
+ 
+ 'coal':[48,48,48],
+ 'dull ore':[133,75,57],
+ 
+ 'shiny ore':[144,209,255],
+ 'quartz':[144,209,255],
+ 'heavy ore':[108,108,200],
+ 
+ 'stick':[136,91,51],
+ 'reed':[248,239,187],
+ 'lotus':[40,50,80],
+ 
+ 
+ //Types of Labor:
+ 
  'labor':[192,192,192],
  'labor (Hoe)':[192,192,192],
  'labor (Axe)':[192,192,192],
@@ -15,61 +42,69 @@ var resources = {
  'labor (Hammer)':[192,192,192],
  'labor (Wizened)':[192,192,192],
  'unequip':[192,192,192],
+ 
+ 
+ //Locations:
+
  'Forest':[25,102,19],
- 'log':[136,91,51],
- 'stick':[136,91,51],
  'Cavern':[80,80,80],
- 'Mineshaft':[60,60,60],
- 'Mineshaft (Deep)':[40,40,40],
- 'Mineshaft (Collapsed)':[60,60,60],
- 'coal':[48,48,48],
- 'dull ore':[133,75,57],
- 'shiny ore':[144,209,255],
- 'platinum':[144,209,255],
- 'quartz':[144,209,255],
- 'quartz dust':[144,209,255],
- 'glass':[144,209,255],
- 'stone':[128,128,128],
  'Steppe':[137,174,94],
  'Clearing':[137,174,94],
+ 'Stream':[46,115,174],
  'Field':[150,164,108],
  'Grain Field (planted)':[150,164,108],
  'Grain Field (ripe)':[248,239,187],
+ 
+ 
+ //Buildings:
+ 
+ 'Town Hall':[192,192,192],
+ 
+ 'Anvil':[72,72,72],
  'Bakery':[248,239,187],
- 'grain':[248,239,187],
- 'grain flour':[248,239,187],
- 'dough':[248,239,187],
- 'bread':[174,126,42],
- 'Stream':[46,115,174],
- 'water':[46,115,174],
  'Hovel':[136,91,51],
  'Inn':[126,81,41],
  'Furnace':[128,128,128],
+ 'Watermill':[136,91,51],
+ 'Steelworks':[108,108,108],
+ 'Monastery':[120,140,120],
+ 
+ 'Mineshaft':[60,60,60],
+ 'Mineshaft (Deep)':[40,40,40],
+ 'Mineshaft (Collapsed)':[60,60,60],
+ 'Underground Spring':[46,115,174],
+ 
+ 'Well':[46,115,174],
+ 
+ 
+ //Refined Resources:
  'iron':[72,72,72],
+ 'platinum':[144,209,255],
+ 'charcoal':[48,48,48],
+ 'steel':[128,128,128],
+ 'lead':[108,108,200],
+ 'glass':[124,189,255],
+
+ 'quartz dust':[144,209,255],
+ 
+ 'grain flour':[248,239,187],
+ 'dough':[248,239,187],
+ 'bread':[174,126,42],
+ 'paper':[182,182,182],
+ 'ink':[40,40,40],
+ 
  'plank':[136,91,51],
  'stone brick':[128,128,128],
- 'Charcoal':[48,48,48],
- 'Anvil':[72,72,72],
+ 
+ 'fresh water':[46,115,174],
+ 
+ 
+ //Tools:
  'Hoe':[72,72,72],
  'Axe':[72,72,72],
  'Pick':[72,72,72],
  'Saw':[72,72,72],
- 'Hammer':[72,72,72],
- 'Well':[46,115,174],
- 'fresh water':[46,115,174],
- 'Underground Spring':[46,115,174],
- 'Watermill':[136,91,51],
- 'Steelworks':[108,108,108],
- 'steel':[128,128,128],
- 'heavy ore':[108,108,200],
- 'lead':[108,108,200],
- 'glass':[124,189,255],
- 'reed':[248,239,187],
- 'paper':[182,182,182],
- 'lotus':[40,50,80],
- 'ink':[40,40,40],
- 'Monastery':[120,140,120],
- 'Monk':[50,60,90]
+ 'Hammer':[72,72,72]
 };
 var discardables = {
  'water':true,
@@ -196,3 +231,4 @@ var blueprints = {
         ]
 };
 
+//hello kai
