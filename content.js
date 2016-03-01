@@ -106,6 +106,7 @@ var resources = {
  'Saw':[72,72,72],
  'Hammer':[72,72,72]
 };
+
 var discardables = {
  'water':true,
  'labor':true,
@@ -118,6 +119,7 @@ var discardables = {
  'fresh water':true,
  'unequip':true
 };
+
 var blueprints = {
  'Steppe':[{inputs:{'labor':5}, outputs:[{'Clearing':1},{'grain':3},{'grain':3},{},{},{},{},{},{},{'Clearing':1},{'grain':3},{'grain':3},{},{},{},{},{},{},{'Stream':1}]}],
  'Forest':[{inputs:{'labor':5}, outputs:[{'log':1}, {'stick':2},{'log':1}]},

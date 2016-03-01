@@ -1,111 +1,21 @@
 <!DOCTYPE html>
 <html>
- <head>
-  <meta charset="utf-8">
-  <title>werk</title>
-  <script src="content.js"></script>
-  <script src="mf.js"></script>
-  
-  <style>
-* {
- font-family: Helvetica;
- color: white;
- user-select: none;
- -webkit-user-select: none;
- -moz-user-select: none;
-}
-#nodes {
- position: relative;
-}
-div {
- font-size: 18pt;
-}
-body {
- margin: 0px;
- padding: 0px;
- background-image:url("bg.png");
- box-shadow: inset 0px 0px 24pt 0px rgba(0, 0, 0, 0.5);
-}
-body, html {
- height: 100%;
- width: 100%;
- overflow: hidden;
-}
-.node {
- display: table;
- position: absolute;
- padding: 20px;
- border-radius: 12pt;
- background-color: #555;
- box-shadow: 0px 0px 12pt 0px rgba(0, 0, 0, 0.5);
-}
-.node:hover {
- cursor:pointer;
-}
-.path {
- position: absolute;
-}
-.path.TL {
- border-top: 10px solid rgba(255,255,255, 0.5);
- border-left: 10px solid rgba(255,255,255, 0.5);
- border-top-left-radius: 20px;
-}
-.path.TR {
- border-top: 10px solid rgba(255,255,255, 0.5);
- border-right: 10px solid rgba(255,255,255, 0.5);
- border-top-right-radius: 20px;
-}
-.path.BL {
- border-bottom: 10px solid rgba(255,255,255, 0.5);
- border-left: 10px solid rgba(255,255,255, 0.5);
- border-bottom-left-radius: 20px;
-}
-.path.BR {
- border-bottom: 10px solid rgba(255,255,255, 0.5);
- border-right: 10px solid rgba(255,255,255, 0.5);
- border-bottom-right-radius: 20px;
-}
-.info {
- font-size: 14pt;
- display: none;
-}
-.info > div {
- font-size: 14pt;
- display: inline-block;
- vertical-align: top;
-}
-.info > div:first-child {
- margin-right: 15px;
-}
-.info > div > div {
- display: block;
-}
-.node.max > .info {
- display: block;
-}
-.node:hover, .node.hl {
- box-shadow: 0px 0px 0px 2px white;
-}
-.connector {
- display: inline-block;
- vertical-align: bottom;
- font-size: 12pt;
- padding: 2px 4px;
- border-radius: 3px;
-}
-.connector:hover {
- box-shadow: 0px 0px 0px 2px white;
-}
-#controls {
- position: fixed;
-}
-#controls > button {
- color: black;
- font-size: 18pt;
-}
-  </style>
- </head>
- <body>
- <div id="nodes"></div>
- </body>
+
+<head>
+
+    <meta charset="utf-8">
+
+    <title>werk</title>
+
+    <link rel="stylesheet" type="text/css" href="styles.css">
+
+    <script src="content.js"></script>
+    <script src="mf.js"></script>
+
+</head>
+
+<body>
+    <div id="nodes"></div>
+</body>
+
 </html>
