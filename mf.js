@@ -1,29 +1,30 @@
-//(function() {
- "use strict";
- function $(id){return document.getElementById(id);}
 
- var NODEPADDING = 40; // 20*2
- var DRAGTHRESH = 20;
- 
- var panx = window.innerWidth/2;
- var pany = window.innerHeight/2;
- var dragOx = 0;
- var dragOy = 0;
- var dragClOx = 0;
- var dragClOy = 0;
- var dragTarget;
- var dragMoved;
- var masterTouch;
- 
- var connecting;
- var connectingLabel;
- var connectingOffset = 16;
- 
- var tickIntervalID = -1;
- var tickInterval = 1000;
+"use strict";
+
+var NODEPADDING = 40; // 20*2
+var DRAGTHRESH = 20;
+
+var panx = window.innerWidth/2;
+var pany = window.innerHeight/2;
+var dragOx = 0;
+var dragOy = 0;
+var dragClOx = 0;
+var dragClOy = 0;
+var dragTarget;
+var dragMoved;
+var masterTouch;
+
+var connecting;
+var connectingLabel;
+var connectingOffset = 16;
+
+var tickIntervalID = -1;
+var tickInterval = 1000;
+
+var nodes = [];
 
 
-function moveListen(e) {
+ function moveListen(e) {
   if (connecting) {
    connectingLabel.style.left = e.clientX + connectingOffset + 'px';
    connectingLabel.style.top = e.clientY + connectingOffset + 'px';
@@ -120,44 +121,57 @@ window.addEventListener('touchstart', function(e) {
    downListen(cts[0]);
   }
  });
-window.addEventListener('load', function() {
-    moveAll();
-    var controls = document.createElement('div');
-    controls.id = 'controls';
-    var pauseButton = document.createElement('button');
-    pauseButton.id = 'pauseButton';
-    pauseButton.addEventListener('click', togglePause);
-    pauseButton.addEventListener('touchstart', togglePause);
-    var saveButton = document.createElement('button');
-    saveButton.id = 'saveButton';
-    saveButton.innerHTML = 'Save';
-    var saveAction = function() {
+
+function AppControls() {
+    var self = this;
+
+    self.controls = document.createElement("DIV");
+    self.controls.id = "controls";
+
+    self.pauseButton = document.createElement("BUTTON");
+    self.pauseButton.id = "pauseButton";
+
+    self.saveButton = document.createElement("BUTTON");
+    self.saveButton.id = "saveButton";
+    self.saveButton.innerHTML = "Save";
+
+    self.resetButton = document.createElement("BUTTON");
+    self.resetButton.id = "resetButton";
+    self.resetButton.innerHTML = "Reset";
+
+    self.saveAction = function() {
         saveToNetwork(getCookie('saveID'));
-    }
-    saveButton.addEventListener('click', saveAction);
-    saveButton.addEventListener('touchstart', saveAction);
-    var resetButton = document.createElement('button');
-    resetButton.id = 'resetButton';
-    resetButton.innerHTML = 'Reset';
-    var resetAction = function() {
-        $('nodes').innerHTML = '';
+    };
+
+    self.resetAction = function() {
+        $('nodes').innerHTML = "";
         nodes = [];
         addInitialNodes();
-    }
-    resetButton.addEventListener('click', resetAction);
-    resetButton.addEventListener('touchstart', resetAction);
-    controls.appendChild(pauseButton);
-    controls.appendChild(saveButton);
-    controls.appendChild(resetButton);
-    document.body.appendChild(controls);
-    deleteCookie('save');
-    if (!getCookie('saveID')) {
-        setCookie('saveID', getTimestamp());
-    }
-    loadFromNetwork(getCookie('saveID'));
-    updateAll();
-    togglePause();
-});
+    };
+
+    self.addDomElements = function() {
+        self.controls.appendChild(self.pauseButton);
+        self.controls.appendChild(self.saveButton);
+        self.controls.appendChild(self.resetButton);
+        document.body.appendChild(self.controls);
+    };
+
+    self.init = function() {
+        self.pauseButton.addEventListener("click", togglePause);
+        self.pauseButton.addEventListener("touchstart", togglePause);
+
+        self.saveButton.addEventListener("click", self.saveAction);
+        self.saveButton.addEventListener("touchstart", self.saveAction);
+
+        self.resetButton.addEventListener("click", self.resetAction);
+        self.resetButton.addEventListener("touchstart", self.resetAction);
+
+        self.addDomElements();
+    }();
+}
+
+
+
 window.addEventListener('mouseup', function(e) {
   upListen(e);
  });
@@ -191,8 +205,6 @@ window.addEventListener('touchend', function(e) {
   }
  }
 
- var nodes = [];
- 
  function saveAllNodes() {
   var savedNodes = [];
   for (var i = 0; i < nodes.length; i++) {
@@ -266,10 +278,6 @@ window.addEventListener('touchend', function(e) {
   }
  }
 
-
- 
-
-
  function addInitialNodes() {
   addNode('Worker', 128, 0);
   addNode('Worker', -128, 0);
@@ -279,6 +287,7 @@ window.addEventListener('touchend', function(e) {
   addNode('Cavern', -128, -128);
   addNode('Town Hall', 0, -256);
  }
+
  function loadFromNetwork(saveID) {
   var r = new XMLHttpRequest();
   r.addEventListener('load', function(e) {
@@ -292,6 +301,7 @@ window.addEventListener('touchend', function(e) {
   r.open("GET", 'http://kbostrom.net/werk/saves/'+saveID);
   r.send();
  }
+
  function saveToNetwork(saveID) {
   var r = new XMLHttpRequest();
   r.open("POST", 'http://kbostrom.net/werk/save.php');
@@ -353,6 +363,7 @@ window.addEventListener('touchend', function(e) {
   updateNodeAppearance(el);
   return el;
  }
+
  function move(el) {
   el.style.left = el.x + 'px';
   el.style.top = el.y + 'px';
@@ -363,11 +374,13 @@ window.addEventListener('touchend', function(e) {
    movePath(el.inPaths[i]);
   }
  }
+
  function moveAll() {
   document.body.style.backgroundPosition = (panx%128) + 'px ' + (pany%128) + 'px';
   $('nodes').style.left = panx + 'px';
   $('nodes').style.top = pany + 'px';
  }
+
  function addPath(ela, elb, res) {
   var p = document.createElement('div');
   p.origin = ela.nodeIndex;
@@ -407,14 +420,7 @@ window.addEventListener('touchend', function(e) {
   p.style.width = (x2-x1) + 'px';
   p.style.height = (y2-y1) + 'px';
  }
- function getWidth(el) {
-  var rw = getComputedStyle(el).width;
-  return parseInt(rw.substr(0, rw.length-2))+NODEPADDING;
- }
- function getHeight(el) {
-  var rh = getComputedStyle(el).height;
-  return parseInt(rh.substr(0, rh.length-2))+NODEPADDING;
- }
+
  function fabricate(blueprint) {
   return {
    name: blueprint,
@@ -570,12 +576,7 @@ window.addEventListener('touchend', function(e) {
    }
   }
  }
- function rgbAlpha(rgb, a) {
-  return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+a+')';
- }
- function rgbSolid(rgb) {
-  return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
- }
+
  function removePath(p) {
   var newConns = [];
   for (var i = 0; i < nodes[p.origin].machine.connectors[p.resource].length; i++) {
@@ -724,4 +725,16 @@ window.addEventListener('touchend', function(e) {
   connectingLabel.remove();
   connectingLabel = undefined;
  }
-//})();
+
+
+function startup() {
+    moveAll();
+    new AppControls();
+    deleteCookie('save');
+    if (!getCookie('saveID')) {
+        setCookie('saveID', getTimestamp());
+    }
+    loadFromNetwork(getCookie('saveID'));
+    updateAll();
+    togglePause();
+}
