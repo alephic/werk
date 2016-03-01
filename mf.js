@@ -21,8 +21,9 @@
  
  var tickIntervalID = -1;
  var tickInterval = 1000;
- 
- function moveListen(e) {
+
+
+function moveListen(e) {
   if (connecting) {
    connectingLabel.style.left = e.clientX + connectingOffset + 'px';
    connectingLabel.style.top = e.clientY + connectingOffset + 'px';
@@ -41,11 +42,62 @@
     move(dragTarget);
    }
   }
- } 
- window.addEventListener('mousemove', function(e) {
+ }
+function downListen(e) {
+    dragMoved = false;
+    dragOx = e.clientX - panx;
+    dragOy = e.clientY - pany;
+    dragClOx = e.clientX;
+    dragClOy = e.clientY;
+    dragTarget = 'pan';
+}
+function upListen(e) {
+    if (dragTarget && !dragMoved) {
+        if (dragTarget != 'pan') {
+            if (connecting) {
+                if (nodes[connecting.origin] != dragTarget) {
+                    if (machineAccepts(dragTarget.machine, connecting.resource)) {
+                        connecting.path = addPath(nodes[connecting.origin], dragTarget, connecting.resource);
+                        nodes[connecting.origin].machine.connectors[connecting.resource].push(createConnector(connecting.origin, connecting.resource));
+                        updateNodeAppearance(nodes[connecting.origin]);
+                    }
+                }
+                stopConnecting();
+            }
+        } else {
+            if (connecting) {
+                if (blueprints[connecting.resource] &&
+                    nodes[connecting.origin].machine.buffer[connecting.resource] > 0) {
+                    addNode(connecting.resource, e.clientX-panx, e.clientY-pany);
+                    nodes[connecting.origin].machine.buffer[connecting.resource] -= 1;
+                    updateNodeAppearance(nodes[connecting.origin]);
+                }
+                stopConnecting();
+            }
+        }
+    }
+    dragTarget = undefined;
+}
+function togglePause() {
+    if (tickIntervalID == -1) {
+        $('pauseButton').innerHTML = 'Pause';
+        tickIntervalID = setInterval(updateAll, tickInterval);
+    } else {
+        $('pauseButton').innerHTML = 'Unpause';
+        clearInterval(tickIntervalID);
+        tickIntervalID = -1;
+    }
+}
+
+window.addEventListener('keydown', function(e) {
+    if (e.keyCode == 32) {
+        togglePause();
+    }
+});
+window.addEventListener('mousemove', function(e) {
   moveListen(e);
  });
- window.addEventListener('touchmove', function(e) {
+window.addEventListener('touchmove', function(e) {
   e.preventDefault();
   var cts = e.changedTouches;
   for (var i = 0; i < cts.length; i++) {
@@ -55,12 +107,12 @@
    }
   }
  });
- window.addEventListener('mousedown', function(e) {
+window.addEventListener('mousedown', function(e) {
   if (e.button == 0) {
    downListen(e);
   }
  });
- window.addEventListener('touchstart', function(e) {
+window.addEventListener('touchstart', function(e) {
   e.preventDefault();
   var cts = e.changedTouches;
   if (cts.length > 0 && masterTouch === undefined) {
@@ -68,18 +120,48 @@
    downListen(cts[0]);
   }
  });
- function downListen(e) {
-  dragMoved = false;
-  dragOx = e.clientX - panx;
-  dragOy = e.clientY - pany;
-  dragClOx = e.clientX;
-  dragClOy = e.clientY;
-  dragTarget = 'pan';
- }
- window.addEventListener('mouseup', function(e) {
+window.addEventListener('load', function() {
+    moveAll();
+    var controls = document.createElement('div');
+    controls.id = 'controls';
+    var pauseButton = document.createElement('button');
+    pauseButton.id = 'pauseButton';
+    pauseButton.addEventListener('click', togglePause);
+    pauseButton.addEventListener('touchstart', togglePause);
+    var saveButton = document.createElement('button');
+    saveButton.id = 'saveButton';
+    saveButton.innerHTML = 'Save';
+    var saveAction = function() {
+        saveToNetwork(getCookie('saveID'));
+    }
+    saveButton.addEventListener('click', saveAction);
+    saveButton.addEventListener('touchstart', saveAction);
+    var resetButton = document.createElement('button');
+    resetButton.id = 'resetButton';
+    resetButton.innerHTML = 'Reset';
+    var resetAction = function() {
+        $('nodes').innerHTML = '';
+        nodes = [];
+        addInitialNodes();
+    }
+    resetButton.addEventListener('click', resetAction);
+    resetButton.addEventListener('touchstart', resetAction);
+    controls.appendChild(pauseButton);
+    controls.appendChild(saveButton);
+    controls.appendChild(resetButton);
+    document.body.appendChild(controls);
+    deleteCookie('save');
+    if (!getCookie('saveID')) {
+        setCookie('saveID', getTimestamp());
+    }
+    loadFromNetwork(getCookie('saveID'));
+    updateAll();
+    togglePause();
+});
+window.addEventListener('mouseup', function(e) {
   upListen(e);
  });
- window.addEventListener('touchend', function(e) {
+window.addEventListener('touchend', function(e) {
   e.preventDefault();
   var cts = e.changedTouches;
   for (var i = 0; i < cts.length; i++) {
@@ -89,6 +171,7 @@
    }
   }
  });
+
  function machineAccepts(m, resource) {
   for (var i = 0; i < m.recipes.length; i++) {
    for (var input in m.recipes[i].inputs) {
@@ -99,34 +182,7 @@
   }
   return false;
  }
- function upListen(e) {
-  if (dragTarget && !dragMoved) {
-   if (dragTarget != 'pan') {
-    if (connecting) {
-     if (nodes[connecting.origin] != dragTarget) {
-      if (machineAccepts(dragTarget.machine, connecting.resource)) {
-       connecting.path = addPath(nodes[connecting.origin], dragTarget, connecting.resource);
-       nodes[connecting.origin].machine.connectors[connecting.resource].push(createConnector(connecting.origin, connecting.resource));
-       updateNodeAppearance(nodes[connecting.origin]);
-      }
-     }
-     stopConnecting();
-    }
-   } else {
-    if (connecting) {
-     if (blueprints[connecting.resource] &&
-         nodes[connecting.origin].machine.buffer[connecting.resource] > 0) {
-      addNode(connecting.resource, e.clientX-panx, e.clientY-pany);
-      nodes[connecting.origin].machine.buffer[connecting.resource] -= 1;
-      updateNodeAppearance(nodes[connecting.origin]);
-     }
-     stopConnecting();
-    }
-   }
-  }
-  dragTarget = undefined;
- }
- 
+
  function resourceColor(res) {
   if (res in resources) {
    return resources[res];
@@ -210,47 +266,10 @@
   }
  }
 
- function getTimestamp() {
-  var d = new Date();
-  return d.getTime();
- }
- 
- function getCookie(name) {
-  var cs = document.cookie.split(";");
-  for (var i = 0; i < cs.length; i++) {
-   var sp = cs[i].indexOf("=");
-   if (cs[i].substr(0,sp) == name)
-    return cs[i].substr(sp+1);
-  }
- }
- 
- function setCookie(name, val) {
-  var d = new Date();
-  d.setFullYear(9999);
-  document.cookie = name+"="+val+";expires="+d.toUTCString();
- }
 
- function deleteCookie(name) {
-  var d = new Date();
-  d.setFullYear(d.getFullYear()-1);
-  document.cookie = name+"=;expires="+d.toUTCString();
- }
  
- function togglePause() {
-  if (tickIntervalID == -1) {
-   $('pauseButton').innerHTML = 'Pause';
-   tickIntervalID = setInterval(updateAll, tickInterval);
-  } else {
-   $('pauseButton').innerHTML = 'Unpause';
-   clearInterval(tickIntervalID);
-   tickIntervalID = -1;
-  }
- }
- window.addEventListener('keydown', function(e) {
-  if (e.keyCode == 32) {
-   togglePause();
-  }
- });
+
+
  function addInitialNodes() {
   addNode('Worker', 128, 0);
   addNode('Worker', -128, 0);
@@ -284,44 +303,7 @@
   f.append('data', saveAllNodes());
   r.send(f);
  }
- window.addEventListener('load', function() {
-  moveAll();
-  var controls = document.createElement('div');
-  controls.id = 'controls';
-  var pauseButton = document.createElement('button');
-  pauseButton.id = 'pauseButton';
-  pauseButton.addEventListener('click', togglePause);
-  pauseButton.addEventListener('touchstart', togglePause);
-  var saveButton = document.createElement('button');
-  saveButton.id = 'saveButton';
-  saveButton.innerHTML = 'Save';
-  var saveAction = function() {
-   saveToNetwork(getCookie('saveID'));
-  }
-  saveButton.addEventListener('click', saveAction);
-  saveButton.addEventListener('touchstart', saveAction);
-  var resetButton = document.createElement('button');
-  resetButton.id = 'resetButton';
-  resetButton.innerHTML = 'Reset';
-  var resetAction = function() {
-   $('nodes').innerHTML = '';
-   nodes = [];
-   addInitialNodes();
-  }
-  resetButton.addEventListener('click', resetAction);
-  resetButton.addEventListener('touchstart', resetAction);
-  controls.appendChild(pauseButton);
-  controls.appendChild(saveButton);
-  controls.appendChild(resetButton);
-  document.body.appendChild(controls);
-  deleteCookie('save');
-  if (!getCookie('saveID')) {
-   setCookie('saveID', getTimestamp());
-  }
-  loadFromNetwork(getCookie('saveID'));
-  updateAll();
-  togglePause();
- });
+
  function addNode(blueprint, x, y) {
   var el = document.createElement('div');
   el.className = 'node';
