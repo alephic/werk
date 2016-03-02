@@ -18,13 +18,11 @@ var connecting;
 var connectingLabel;
 var connectingOffset = 16;
 
-var tickIntervalID = -1;
-var tickInterval = 1000;
 
 var nodes = [];
 
 
- function moveListen(e) {
+function moveListen(e) {
   if (connecting) {
    connectingLabel.style.left = e.clientX + connectingOffset + 'px';
    connectingLabel.style.top = e.clientY + connectingOffset + 'px';
@@ -79,25 +77,11 @@ function upListen(e) {
     }
     dragTarget = undefined;
 }
-function togglePause() {
-    if (tickIntervalID == -1) {
-        $('pauseButton').innerHTML = 'Pause';
-        tickIntervalID = setInterval(updateAll, tickInterval);
-    } else {
-        $('pauseButton').innerHTML = 'Unpause';
-        clearInterval(tickIntervalID);
-        tickIntervalID = -1;
-    }
-}
 
-window.addEventListener('keydown', function(e) {
-    if (e.keyCode == 32) {
-        togglePause();
-    }
-});
 window.addEventListener('mousemove', function(e) {
   moveListen(e);
  });
+
 window.addEventListener('touchmove', function(e) {
   e.preventDefault();
   var cts = e.changedTouches;
@@ -108,11 +92,13 @@ window.addEventListener('touchmove', function(e) {
    }
   }
  });
+
 window.addEventListener('mousedown', function(e) {
   if (e.button == 0) {
    downListen(e);
   }
  });
+
 window.addEventListener('touchstart', function(e) {
   e.preventDefault();
   var cts = e.changedTouches;
@@ -121,56 +107,6 @@ window.addEventListener('touchstart', function(e) {
    downListen(cts[0]);
   }
  });
-
-function AppControls() {
-    var self = this;
-
-    self.controls = document.createElement("DIV");
-    self.controls.id = "controls";
-
-    self.pauseButton = document.createElement("BUTTON");
-    self.pauseButton.id = "pauseButton";
-
-    self.saveButton = document.createElement("BUTTON");
-    self.saveButton.id = "saveButton";
-    self.saveButton.innerHTML = "Save";
-
-    self.resetButton = document.createElement("BUTTON");
-    self.resetButton.id = "resetButton";
-    self.resetButton.innerHTML = "Reset";
-
-    self.saveAction = function() {
-        saveToNetwork(getCookie('saveID'));
-    };
-
-    self.resetAction = function() {
-        $('nodes').innerHTML = "";
-        nodes = [];
-        addInitialNodes();
-    };
-
-    self.addDomElements = function() {
-        self.controls.appendChild(self.pauseButton);
-        self.controls.appendChild(self.saveButton);
-        self.controls.appendChild(self.resetButton);
-        document.body.appendChild(self.controls);
-    };
-
-    self.init = function() {
-        self.pauseButton.addEventListener("click", togglePause);
-        self.pauseButton.addEventListener("touchstart", togglePause);
-
-        self.saveButton.addEventListener("click", self.saveAction);
-        self.saveButton.addEventListener("touchstart", self.saveAction);
-
-        self.resetButton.addEventListener("click", self.resetAction);
-        self.resetButton.addEventListener("touchstart", self.resetAction);
-
-        self.addDomElements();
-    }();
-}
-
-
 
 window.addEventListener('mouseup', function(e) {
   upListen(e);
@@ -727,14 +663,3 @@ window.addEventListener('touchend', function(e) {
  }
 
 
-function startup() {
-    moveAll();
-    new AppControls();
-    deleteCookie('save');
-    if (!getCookie('saveID')) {
-        setCookie('saveID', getTimestamp());
-    }
-    loadFromNetwork(getCookie('saveID'));
-    updateAll();
-    togglePause();
-}
